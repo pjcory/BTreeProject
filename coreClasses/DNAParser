@@ -1,1 +1,97 @@
+package coreClasses;
 
+
+public class DNAParser{
+
+private String fileName;	
+private DNAStream Stream;
+private int Length = 0;
+
+  public DNAParser(String filename, int length){
+      Stream = new DNAStream(filename);
+      fileName = filename;
+      Length = length;
+  }
+  
+  public String nextSubSeq(){
+    String retVal = "";
+     int i = 0; 
+    
+     while(i < Length){
+        String nextLetter = Stream.nextLetter();
+        if(nextLetter == null) return null;        
+        if((nextLetter == "\\") || (nextLetter == "N")){
+          retVal = ""; i = 0;
+        }else{
+          retVal += nextLetter;
+        }        
+     }//End while loop
+     
+     Stream.setBack(Length-1);
+     return retVal;
+  }//End nextSubSeq()
+
+  public long convertToBinary(String seq){
+      String seqBinaryString = "";
+      int i = 0;
+      
+      while(i < Length){
+        char letter = seq.charAt(i);
+        switch(letter){
+          case('A'):
+            seqBinaryString += "00";
+            break;
+          case('T'):
+            seqBinaryString += "11";
+            break;
+          case('C'):
+            seqBinaryString += "01";
+            break;
+          case('G'):
+            seqBinaryString += "10";
+            break;   
+        }//End switch
+        
+        i++;
+      }//End while loop
+      
+      long retVal = Long.parseLong(seqBinaryString);
+      return retVal;
+      
+  }//End convertToBinary
+
+  public String convertToString(long seq){
+    String seqNumbers = Long.toString(seq);
+    String retVal = "";
+    int i = 0;
+    
+    while(i < (Length*2)-2){
+      String current = "";
+      char first = seqNumbers.charAt(i);
+      char second = seqNumbers.charAt(i+1);
+      current = first+ "" + "" + second;
+      
+      switch(current){
+        case("00"):
+          retVal += "A";
+           break;
+        case("11"):
+          retVal += "T";
+          break;
+        case("01"):
+          retVal += "C";
+          break;
+        case("10"):
+          retVal += "G";
+          break; 
+      }//End switch
+      
+      i += 2;
+      
+    }//End while loop
+    
+    return retVal;
+    
+  }//End convertToString
+
+}//End Class
