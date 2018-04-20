@@ -1,1 +1,82 @@
+package coreClasses;
 
+public class DNAParser{
+
+private String fileName;	
+private DNAStream Stream;
+private int Length = 0;
+
+  public DNAParser(String filename, int length){
+      Stream = new DNAStream(filename);
+      fileName = filename;
+      Length = length;
+  }
+  
+  public String nextSubSeq(){
+    String retVal = "";
+     int i = 0; 
+    
+     while(i < Length){
+        String nextLetter = Stream.nextLetter();
+        if(nextLetter == null) return null;        
+        if((nextLetter == "\\") || (nextLetter == "n")){
+          retVal = ""; i = 0;
+        }else{
+          retVal += nextLetter;
+        }        
+     }//End while loop
+     
+     Stream.setBack(Length-1);
+     return retVal;
+  }//End nextSubSeq()
+
+  public long convertToBinary(String seq, int length){
+      int i = 0;      
+      long key = 0; 
+      
+      while(i < length){
+        char letter = seq.charAt(i);
+        int tBits = 0;
+        switch(letter){
+          case('a'):
+        	tBits = 0x00;  
+            break;
+          case('t'):
+        	tBits = 0x03;  
+            break;
+          case('c'):
+        	tBits = 0x01;  
+            break;
+          case('g'):
+        	tBits = 0x02;  
+            break;   
+        }//End switch        
+        
+        int posValue = tBits << 2*i;
+        key = key | posValue;   
+        i++;
+      }//End while loop
+
+      return key;
+      
+  }//End convertToBinary()
+
+  public String convertToString(long seq, int length){
+	char[] geneMap = {'a','c','g','t'};  
+    String retVal = "";
+    
+    for(int i = 0; i < length; i++){
+    	long temp = seq;
+    	temp = temp >> 2*i;
+    	temp = temp & 0x03;
+    	
+    	char gene = geneMap[(int) temp];
+    	retVal += gene;
+      
+    }//End for loop
+    
+    return retVal;
+    
+  }//End convertToString
+
+}//End Class
